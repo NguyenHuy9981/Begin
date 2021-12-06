@@ -1,0 +1,125 @@
+<form class="mt-4" method="POST" action="/books/checkSubmit">
+    <h3>Sách trong kho</h3>
+    <div class="mt-4 mb-4 d-flex align-items-center">
+      <div class="form-check">
+        <input class="form-check-all" type="checkbox" value="" id="check-all">
+        <label class="form-check-label" for="check-all">Check tất cả</label>
+      </div>
+      <select class="custom-select length-select" required name="action">
+        <option value="">--Chọn hành động--</option>
+        <option value="delete">Xóa</option>
+        
+      </select>
+      <button class="btn btn-primary" type="submit" disabled="disabled" id="submit-btn">Thực hiện</button>
+    </div>
+
+    <table class="table table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th scope="col">STT</th>
+      <th scope="col">Tên</th>
+      <th scope="col">Link hình</th>
+      <th scope="col" colspan="2">slug</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each books}}
+    <tr>
+      <th><input class="form-check-input" type="checkbox" value="{{this._id}}" name="bookIds[]"></th>
+      <th scope="row">{{this._id}}</th>
+      <td>{{this.name}}</td>
+      <td>{{this.image}}</td>
+      <td>{{this.slug}}</td>
+      <td>
+        <button type="button" class="btn btn-link" data-toggle="modal" data-target="#deleteBook" data-id="{{this._id}}" >Xóa</button>
+      </td>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>
+</form>
+
+{{!--NÚT XÓA--}}
+<div class="modal" tabindex="-1" role="dialog" id="deleteBook">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Xóa sách?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Xóa là mất hết á</p>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-delete" type="button" class="btn btn-danger">Đòng ý</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  
+
+  document.addEventListener('DOMContentLoaded', function() {
+    
+    var bookId
+    const buttonDelete = document.getElementById('btn-delete')
+    const formDelete = document.forms['form-delete']
+
+
+    $('#deleteBook').on('show.bs.modal', function (event) {
+    const button = $(event.relatedTarget) 
+    bookId = button.data('id') 
+    
+})
+
+  buttonDelete.onclick = function() {
+    formDelete.action = '/books/' + bookId + '/delete?_method=DELETE'
+    formDelete.submit()
+
+}
+
+  })
+
+</script>
+
+<form method="POST" name="form-delete"></form>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var checkAllButton = $('#check-all')
+    var checkCourse = $('input[class="form-check-input"]')
+    var SubmitBtn = $('#submit-btn')
+    console.log(SubmitBtn)
+    checkCourse.change(function() {
+      const ischeckCourse = checkCourse.length === $('input[class="form-check-input"]:checked').length
+      checkAllButton.prop('checked', ischeckCourse)
+      onSubmitBtn()
+    })
+    checkAllButton.change(function() {
+      const isCheckedAll = $(this).prop('checked')
+      const isCheckedCourseAll = checkCourse.prop('checked', isCheckedAll)
+      onSubmitBtn()
+
+    })
+    function onSubmitBtn() {
+      const isChecked = $('input[class="form-check-input"]:checked').length
+      
+      if(isChecked > 0) {
+        SubmitBtn.attr('disabled', false)
+      } else {
+        SubmitBtn.attr('disabled', true)
+      }
+      
+      
+      
+
+    }
+
+  })
+</script>

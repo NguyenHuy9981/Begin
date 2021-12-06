@@ -1,0 +1,120 @@
+<form class="mt-4" method="POST" action="/wheys/checkForm" >
+    <h3>Sản phẩm</h3>
+    <div class="mt-4 mb-4 d-flex align-items-center">
+    <div class="form-check">
+      <input class="form-check-inputTotal" type="checkbox" value="" id="check-all">
+      <label class="form-check-label" for="defaultCheck1">
+        Check tất cả
+      </label>
+    </div>
+    <select class="custom-select custom-select-sm options" required name="action">
+      <option value="">Chọn hành động</option>
+      <option value="delete">Xóa</option>
+    </select>
+    <button class="btn btn-primary" type="submit" id="submit-btn" disabled>Thực hiện</button>
+    </div>
+    <table class="table">
+        <thead class="thead-dark">
+            <tr>
+              <th></th>
+                <th scope="col">STT</th>
+                <th scope="col">Tên</th>
+                <th scope="col">link hình</th>
+                <th scope="col">Slug</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each wheys}}
+            <tr>
+                <th><input class="form-check-input" type="checkbox" value="{{this._id}}" name="WheyIds[]"></th>
+                <th scope="row">{{sum @index 1}}</th>
+                <td>{{this.name}}</td>
+                <td>{{this.image}}</td>
+                <td>{{this.slug}}</td>
+                <td>
+                    <a href="/wheys/{{this._id}}/edit" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Sửa</a>
+                    <a href="#" class="btn btn-secondary btn-lg active" role="button" aria-pressed="true" data-toggle="modal" data-target="#deleteWhey" data-id="{{this._id}}">Xóa</a>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+</table>
+</form>
+
+
+{{!--NÚT XÓA--}}
+
+<div class="modal" tabindex="-1" role="dialog" id="deleteWhey">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Xóa sản phẩm?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Bạn chắc chắn muốn xóa?</p>
+      </div>
+      <div class="modal-footer">
+        <button id="haha" type="button" class="btn btn-danger" >Đồng ý</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<form name="delete-form" method="POST"></form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        $('#deleteWhey').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget) 
+        recipient = button.data('id') 
+        console.log(recipient)
+})
+    const buttonDelete = document.getElementById('haha')
+    const deleteForm = document.forms['delete-form']
+    var recipient
+
+    buttonDelete.onclick = function() {
+        deleteForm.action = '/wheys/' + recipient + '/delete?_method=DELETE'
+        deleteForm.submit()
+    }
+
+    })
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var checkBoxAll = $('#check-all')
+    var checkWhey = $('input[class="form-check-input"]')
+    var onSubmitBtn = $('#submit-btn')
+    
+    checkBoxAll.change(function() {
+      const isCheckAll = $(this).prop('checked')
+      const ischeckWhey = checkWhey.prop('checked', isCheckAll)
+      onSubmit()
+    })
+
+    checkWhey.change(function() {
+      ischeckWheyAll = checkWhey.length === $('input[class="form-check-input"]:checked').length
+      checkBoxAll.prop('checked', ischeckWheyAll)
+      onSubmit()
+    })
+
+    function onSubmit() {
+      const isChecked = $('input[class="form-check-input"]:checked').length
+      if(isChecked > 0) {
+      onSubmitBtn.attr('disabled', false)
+      }else {
+      onSubmitBtn.attr('disabled', true)
+    }
+
+    }
+
+
+  })
+
+</script>
